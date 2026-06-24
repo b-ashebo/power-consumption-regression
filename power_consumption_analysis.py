@@ -172,17 +172,13 @@ plt.show()
 
 
 # Train/test split
-# NOTE: as in the original R script, X here includes the per-zone columns and
-# the scaled target itself. That means the target leaks into the predictors,
-# which inflates the scores. Drop zone_cols + "PowerConsumption_Zone" from X
-# if you want a leakage-free model. Kept as-is to match the original analysis.
 X = df_scaled
 y = df["PowerConsumption_Zone"].values
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 
-# Linear regression summary (statsmodels, mirrors R's summary(lm))
+# Linear regression summary 
 ols = sm.OLS(y_train, sm.add_constant(X_train)).fit()
 print("\n", ols.summary())
 
