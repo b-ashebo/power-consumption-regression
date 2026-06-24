@@ -23,9 +23,7 @@ from sklearn.linear_model import (
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 
-# ---------------------------------------------------------------------------
 # Load data
-# ---------------------------------------------------------------------------
 df = pd.read_csv("powerconsumption.csv")
 print(df.head())
 print("Shape:", df.shape)
@@ -40,9 +38,7 @@ zone_cols = [
 df["PowerConsumption_Zone"] = df[zone_cols].mean(axis=1)
 
 
-# ---------------------------------------------------------------------------
 # Inspect & clean
-# ---------------------------------------------------------------------------
 print("\nMissing values:\n", df.isna().sum())
 print("\nDuplicate rows:", df.duplicated().sum())
 print("\nSummary statistics:\n", df.describe())
@@ -50,9 +46,7 @@ print("\nSummary statistics:\n", df.describe())
 df["Datetime"] = pd.to_datetime(df["Datetime"], format="%m/%d/%Y %H:%M")
 
 
-# ---------------------------------------------------------------------------
 # Exploratory plots
-# ---------------------------------------------------------------------------
 # Boxplot of the three zones
 df[zone_cols].plot(kind="box", figsize=(8, 5), title="Boxplot of Selected Features")
 plt.ylabel("Values")
@@ -133,9 +127,7 @@ plt.tight_layout()
 plt.show()
 
 
-# ---------------------------------------------------------------------------
 # Correlation analysis
-# ---------------------------------------------------------------------------
 cor_matrix = df[dist_cols].corr()
 
 plt.figure(figsize=(9, 7))
@@ -157,9 +149,7 @@ low_corr = cor_pairs[cor_pairs["abs_corr"] < 0.11].sort_values("abs_corr")
 print("\nLow Correlation Pairs:\n", low_corr)
 
 
-# ---------------------------------------------------------------------------
 # Standardization & normalization
-# ---------------------------------------------------------------------------
 numerical_columns = dist_cols
 
 scaler = StandardScaler()
@@ -181,9 +171,7 @@ plt.tight_layout()
 plt.show()
 
 
-# ---------------------------------------------------------------------------
 # Train/test split
-# ---------------------------------------------------------------------------
 # NOTE: as in the original R script, X here includes the per-zone columns and
 # the scaled target itself. That means the target leaks into the predictors,
 # which inflates the scores. Drop zone_cols + "PowerConsumption_Zone" from X
@@ -194,16 +182,13 @@ y = df["PowerConsumption_Zone"].values
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 
-# ---------------------------------------------------------------------------
 # Linear regression summary (statsmodels, mirrors R's summary(lm))
-# ---------------------------------------------------------------------------
 ols = sm.OLS(y_train, sm.add_constant(X_train)).fit()
 print("\n", ols.summary())
 
 
-# ---------------------------------------------------------------------------
+
 # Fit & evaluate all models
-# ---------------------------------------------------------------------------
 models = {
     "Linear Regression": LinearRegression(),
     "Ridge Regression": RidgeCV(alphas=np.logspace(-3, 3, 100)),
@@ -223,9 +208,7 @@ for name, model in models.items():
 residuals = {name: y_test - pred for name, pred in predictions.items()}
 
 
-# ---------------------------------------------------------------------------
 # Residual diagnostics
-# ---------------------------------------------------------------------------
 # QQ plots
 for name, res in residuals.items():
     plt.figure()
